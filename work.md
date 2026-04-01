@@ -124,5 +124,4 @@ Task AC: Diagram renders correctly in the GitHub README.md.
 Task 5.1.3: Proof of Execution
 
 Action: Capture screenshots of the Databricks notebook output and the MLflow Trace showing a successful recovery.
-
 Task AC: Images are embedded in the README.md under a "System in Action" header.
