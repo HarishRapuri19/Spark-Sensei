@@ -73,20 +73,39 @@ python agent.py
 
 ![MLflow trace screenshot](docs/screenshots/2-mlflow-trace.png)
 
-> Note: These are placeholders. In a real pipeline, capture actual screenshots from Databricks UI and commit them.
+# 🥋 Project Spark-Sensei: Self-Healing Agentic SQL Analyst
 
-## 📈 Senior Engineering Signals
+![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)
+![Databricks](https://img.shields.io/badge/Databricks-Community_Edition-F37021.svg)
+![LangGraph](https://img.shields.io/badge/LangGraph-Agentic_Orchestration-000000.svg)
+![Groq](https://img.shields.io/badge/Groq-Llama_3-f55036.svg)
+![MLflow](https://img.shields.io/badge/MLflow-Observability-0194E2.svg)
 
-- Clear single-responsibility modules
-- Explicit typed state (`AgentState`) for correctness and better code review
-- LLM call injection with `set_llm_call()` for testability
-- Feature toggles and conditional transitions (self-healing control flow)
-- MLflow telemetry + audit log
-- Readme with architecture diagram + execution proof
+An enterprise-grade, agentic AI system designed specifically for the Databricks ecosystem. Spark-Sensei translates natural language into PySpark SQL, executes the queries against a live cluster, and—crucially—**autonomously catches and debugs Spark runtime errors (`PySparkException`) without human intervention.**
+
+Built entirely on the Databricks Community Edition (CE) using open-source orchestration, proving that robust AI systems rely on strong engineering plumbing, not just expensive managed services.
 
 ---
 
-## 📦 files to add after capture
+## 🏗️ System Architecture
 
-- `docs/screenshots/1-notebook-output.png`
-- `docs/screenshots/2-mlflow-trace.png`
+Spark-Sensei is orchestrated using a **LangGraph State Machine** that loops between planning, tool utilization, execution, and error healing.
+
+```mermaid
+graph TD
+    User((User Prompt)) --> Planner
+    
+    subgraph Agentic Loop
+        Planner[🧠 Planner Node <br/> Generates SQL]
+        Tools[🛠️ Tool Node <br/> Inspects Hive Metastore]
+        Executor[⚙️ Executor Node <br/> Runs spark.sql]
+        Healer[🩹 Healer Node <br/> Analyzes Spark Exception]
+        
+        Planner -->|Needs Schema| Tools
+        Tools -->|Returns Metadata| Planner
+        Planner -->|Executes SQL| Executor
+        Executor -->|Catches Error| Healer
+        Healer -->|Rewrites SQL| Planner
+    end
+    
+    Executor -->|Success| Output((Final DataFrame))
